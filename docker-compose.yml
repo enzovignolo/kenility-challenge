@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  kenility-challenge :
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kenility-challenge 
+    restart: always
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env.docker.local
+
+    depends_on:
+      - mongodb
+    networks:
+      - kenility-network
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - kenility-network
+
+networks:
+  kenility-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
