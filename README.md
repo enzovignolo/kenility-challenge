@@ -6,7 +6,7 @@
 2. Correr el siguiente comando: docker-compose up -d  
 3. Ingresar a http://localhost:5000/docs para visualizar la documentación de swagger
       
-  ## Save Readme ✨  
+  ## Información útil ✨  
 El usuario administrador tiene como credenciales:
 - email: admin@admin.com
 - password: <definida en el .env>  
