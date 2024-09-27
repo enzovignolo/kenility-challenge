@@ -4,6 +4,8 @@ import { CreateUserReqBody } from './dtos/create-user.dto';
 import { USERS_REPOSITORY, UsersRepository } from './users.interface';
 import { User } from './entities/user.entity';
 import { UserQueryDTO } from './dtos/get-user.dto';
+import { UpdateUserReqBody } from './dtos/update-user.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +16,7 @@ export class UsersService {
   async createUser(
     newUserData: CreateUserReqBody,
     profilePicturePath: string,
-  ): Promise<Pick<User, 'id' | 'email'>> {
+  ): Promise<Pick<User, '_id' | 'email'>> {
     //Hash user password
     const hash = await bcrypt.hash(newUserData.password, 12);
     //save user data
@@ -27,5 +29,12 @@ export class UsersService {
   }
   async getAll(paginationParms?: UserQueryDTO) {
     return this.usersRepository.getAllandCount(paginationParms);
+  }
+
+  async updateUser(
+    id: string,
+    updatedUserData: UpdateUserReqBody & { profilePicture?: string },
+  ) {
+    return this.usersRepository.updateOne(id, updatedUserData);
   }
 }

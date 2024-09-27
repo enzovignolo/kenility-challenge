@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ROLES } from '../../common/constants/roles.enum';
 
 export class CreateUserDTO {
@@ -41,5 +47,7 @@ export class CreateUserReqBody {
   @IsNotEmpty()
   lastname: string;
 
+  @IsEnum(ROLES)
+  @IsOptional()
   role?: ROLES = ROLES.USER;
 }
