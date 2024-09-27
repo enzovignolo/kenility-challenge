@@ -24,10 +24,63 @@ import { UpdateUserReqBody } from './dtos/update-user.dto';
 import { OnlyIdParam } from 'src/common/dto/params.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AdminGuard } from 'src/auth/admin.guard';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
   constructor(@Inject() private readonly usersService: UsersService) {}
+  @ApiCreatedResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+        _id: { type: 'string' },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'number', enum: [401] },
+        message: { type: 'string', enum: ['Unauthorized'] },
+      },
+    },
+  })
+  @ApiForbiddenResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+        status: { type: 'number', enum: [403] },
+        error: { type: 'string', enum: ['Forbidden'] },
+      },
+    },
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Create user with profile picture',
+    schema: {
+      type: 'object',
+      properties: {
+        address: { type: 'string', nullable: true },
+        email: { type: 'string', format: 'email' },
+        password: { type: 'string' },
+        name: { type: 'string', example: 'John' },
+        lastname: { type: 'string', example: 'Doe', nullable: true },
+        role: { type: 'string', enum: ['USER', 'ADMIN'] },
+        profilePicture: { type: 'string', format: 'binary', nullable: true }, // Archivo de imagen
+      },
+    },
+  })
   @Post()
   @UseInterceptors(
     FileInterceptor('profilePicture', {
@@ -44,12 +97,37 @@ export class UsersController {
   ) {
     const { email, _id } = await this.usersService.createUser(
       newUserData,
-      profilePicture.path,
+      profilePicture?.path,
     );
     return { email, _id };
   }
+  @ApiOkResponse({
+    description: 'List of users',
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(PaginatedResponse) },
+        {
+          properties: {
+            data: {
+              type: 'array',
+              items: { $ref: getSchemaPath(UserDTO) },
+            },
+          },
+        },
+      ],
+    },
+  })
+  @ApiUnauthorizedResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'number', enum: [401] },
+        message: { type: 'string', enum: ['Unauthorized'] },
+      },
+    },
+  })
   @UsePipes(new ValidationPipe({ transform: true }))
-  @UseGuards(AuthGuard, AdminGuard)
+  @UseGuards(AuthGuard)
   @Get()
   async getAll(
     @Query() query: UserQueryDTO,
@@ -64,8 +142,30 @@ export class UsersController {
       totalPages: Math.ceil(count / (paginationOpts.limit || count)),
     };
   }
+  @ApiOkResponse({
+    type: UserDTO,
+  })
+  @ApiUnauthorizedResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'number', enum: [401] },
+        message: { type: 'string', enum: ['Unauthorized'] },
+      },
+    },
+  })
+  @ApiForbiddenResponse({
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+        status: { type: 'number', enum: [403] },
+        error: { type: 'string', enum: ['Forbidden'] },
+      },
+    },
+  })
   @UseGuards(AuthGuard, AdminGuard)
-  @Put('/:id')
+  @Put('/:_id')
   @UseInterceptors(
     FileInterceptor('profilePicture', {
       storage: diskStorage({
