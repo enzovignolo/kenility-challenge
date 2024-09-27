@@ -75,8 +75,8 @@ export class UsersController {
         address: { type: 'string', nullable: true },
         email: { type: 'string', format: 'email' },
         password: { type: 'string' },
-        name: { type: 'string', example: 'John' },
-        lastname: { type: 'string', example: 'Doe', nullable: true },
+        name: { type: 'string' },
+        lastname: { type: 'string', nullable: true },
         role: { type: 'string', enum: ['USER', 'ADMIN'] },
         profilePicture: { type: 'string', format: 'binary', nullable: true }, // Archivo de imagen
       },
@@ -175,6 +175,21 @@ export class UsersController {
       }),
     }),
   )
+  @ApiBody({
+    description: 'Create user with profile picture',
+    schema: {
+      type: 'object',
+      properties: {
+        address: { type: 'string', nullable: true },
+        email: { type: 'string', format: 'email', nullable: true },
+        password: { type: 'string', nullable: true },
+        name: { type: 'string' },
+        lastname: { type: 'string', nullable: true },
+        role: { type: 'string', enum: ['USER', 'ADMIN'] },
+        profilePicture: { type: 'string', format: 'binary', nullable: true }, // Archivo de imagen
+      },
+    },
+  })
   async updateUser(
     @Param() params: OnlyIdParam,
     @Body() data: UpdateUserReqBody,
