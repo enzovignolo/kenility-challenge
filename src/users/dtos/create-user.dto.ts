@@ -9,8 +9,8 @@ import { ROLES } from '../../common/constants/roles.enum';
 
 export class CreateUserDTO {
   @IsString()
-  @IsNotEmpty()
-  address: string;
+  @IsOptional()
+  address?: string;
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -21,19 +21,19 @@ export class CreateUserDTO {
   @IsNotEmpty()
   name: string;
   @IsString()
-  @IsNotEmpty()
-  lastname: string;
+  @IsOptional()
+  lastname?: string;
   @IsString()
-  @IsNotEmpty()
-  profilePicture: string;
+  @IsOptional()
+  profilePicture?: string;
 
   role?: ROLES = ROLES.USER;
 }
 
 export class CreateUserReqBody {
   @IsString()
-  @IsNotEmpty()
-  address: string;
+  @IsOptional()
+  address?: string;
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -44,9 +44,8 @@ export class CreateUserReqBody {
   @IsNotEmpty()
   name: string;
   @IsString()
-  @IsNotEmpty()
-  lastname: string;
-
+  @IsOptional()
+  lastname?: string;
   @IsEnum(ROLES)
   @IsOptional()
   role?: ROLES = ROLES.USER;

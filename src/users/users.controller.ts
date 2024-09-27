@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -21,6 +22,8 @@ import { UserDTO, UserQueryDTO } from './dtos/get-user.dto';
 import { PaginatedResponse } from 'src/common/dto/pagination.dto';
 import { UpdateUserReqBody } from './dtos/update-user.dto';
 import { OnlyIdParam } from 'src/common/dto/params.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { AdminGuard } from 'src/auth/admin.guard';
 
 @Controller('users')
 export class UsersController {
@@ -34,6 +37,7 @@ export class UsersController {
       }),
     }),
   )
+  @UseGuards(AuthGuard, AdminGuard)
   async createUser(
     @UploadedFile() profilePicture: Express.Multer.File,
     @Body() newUserData: CreateUserReqBody,
@@ -45,6 +49,7 @@ export class UsersController {
     return { email, _id };
   }
   @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(AuthGuard, AdminGuard)
   @Get()
   async getAll(
     @Query() query: UserQueryDTO,
@@ -59,6 +64,7 @@ export class UsersController {
       totalPages: Math.ceil(count / (paginationOpts.limit || count)),
     };
   }
+  @UseGuards(AuthGuard, AdminGuard)
   @Put('/:id')
   @UseInterceptors(
     FileInterceptor('profilePicture', {

@@ -11,4 +11,5 @@ export interface UsersRepository {
     paginationParms?: UserQueryDTO,
   ): Promise<{ users: UserDTO[]; count: number }>;
   updateOne(id: string, updateUserDto: UpdateUserDTO): Promise<UserDTO>;
+  getOneByEmail(email: string): Promise<User>;
 }
