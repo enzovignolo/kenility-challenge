@@ -40,7 +40,11 @@ export class UserMongoRepository implements UsersRepository {
   }
   async updateOne(id: string, updateUserDto: UpdateUserDTO): Promise<UserDTO> {
     const updatedUser = await this.userModel
-      .findOneAndUpdate({ _id: id }, { $set: updateUserDto }, { new: true })
+      .findOneAndUpdate(
+        { _id: id },
+        { $set: { ...updateUserDto, updatedAt: new Date(Date.now()) } },
+        { new: true },
+      )
       .select('-hash')
       .lean<UserDTO>();
     return updatedUser;
