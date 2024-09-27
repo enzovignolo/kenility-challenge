@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -187,6 +188,8 @@ export class UsersController {
       params._id,
       updatedUserData,
     );
+    if (!userUpdated)
+      throw new NotFoundException(`User with _id ${params._id}, was not found`);
     return userUpdated;
   }
 }
