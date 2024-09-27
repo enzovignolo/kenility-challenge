@@ -15,7 +15,7 @@ import { UserMongoRepository } from '../users/repositories/users-mongo.repositor
     JwtModule.register({
       global: true,
       secret: AUTH_CONSTANTS.JWT_SECRET,
-      signOptions: { expiresIn: AUTH_CONSTANTS.JWT_EXPIRATION_SECONDS },
+      signOptions: { expiresIn: AUTH_CONSTANTS.JWT_EXPIRATION },
     }),
   ],
   controllers: [AuthController],
